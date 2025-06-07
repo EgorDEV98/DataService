@@ -1,0 +1,85 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace DataService.Data.Migrations
+{
+    /// <inheritdoc />
+    public partial class Initial : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Shares",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Figi = table.Column<string>(type: "text", nullable: false),
+                    Ticker = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    First1MinCandleDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    First1DayCandleDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shares", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Candles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Open = table.Column<double>(type: "double precision", nullable: false),
+                    High = table.Column<double>(type: "double precision", nullable: false),
+                    Low = table.Column<double>(type: "double precision", nullable: false),
+                    Close = table.Column<double>(type: "double precision", nullable: false),
+                    Volume = table.Column<long>(type: "bigint", nullable: false),
+                    Time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Interval = table.Column<string>(type: "character varying(10)", nullable: false),
+                    LoadType = table.Column<string>(type: "character varying(20)", nullable: false),
+                    ShareId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Candles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Candles_Shares_ShareId",
+                        column: x => x.ShareId,
+                        principalTable: "Shares",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Candles_ShareId_Interval_Time",
+                table: "Candles",
+                columns: new[] { "ShareId", "Interval", "Time" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shares_Figi",
+                table: "Shares",
+                column: "Figi",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shares_Ticker",
+                table: "Shares",
+                column: "Ticker",
+                unique: true);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Candles");
+
+            migrationBuilder.DropTable(
+                name: "Shares");
+        }
+    }
+}

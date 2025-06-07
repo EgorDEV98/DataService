@@ -1,0 +1,42 @@
+using DataService.Data.Common;
+using DataService.Data.Entities;
+using DataService.Data.Enum;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
+namespace DataService.Data.Configuration;
+
+/// <summary>
+/// Конфигурация таблицы свечей
+/// </summary>
+public class CandleConfiguration : IEntityTypeConfiguration<Candle>
+{
+    public void Configure(EntityTypeBuilder<Candle> builder)
+    {
+        var intervalConverter = new ValueConverter<CandleInterval, string>(
+            x => EnumConverters.ToEnumString(x),
+            x => EnumConverters.ToEnum<CandleInterval>(x),
+            new ConverterMappingHints(size: 10, unicode: false));
+        
+        var loadTypeConverter = new ValueConverter<LoadType, string>(
+            x => EnumConverters.ToEnumString(x),
+            x => EnumConverters.ToEnum<LoadType>(x),
+            new ConverterMappingHints(size: 20, unicode: false));
+        
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Close).IsRequired();
+        builder.Property(x => x.High).IsRequired();
+        builder.Property(x => x.Low).IsRequired();
+        builder.Property(x => x.Open).IsRequired();
+        builder.Property(x => x.Volume).IsRequired();
+        builder.Property(x => x.Interval).HasConversion(intervalConverter).IsRequired();
+        builder.Property(x => x.LoadType).HasConversion(loadTypeConverter).IsRequired();
+        
+        builder.HasOne(x => x.Share)
+            .WithMany(x => x.Candles)
+            .HasForeignKey(x => x.ShareId);
+
+        builder.HasIndex(x => new { x.ShareId, x.Interval, x.Time }).IsUnique();
+    }
+}
