@@ -29,6 +29,7 @@
     <ItemGroup>
       <ProjectReference Include="..\DataService.Application\DataService.Application.csproj" />
       <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj" />
+      <ProjectReference Include="..\DataService.Integration.Tinkoff\DataService.Integration.Tinkoff.csproj" />
     </ItemGroup>
 
 </Project>
