@@ -81,6 +81,11 @@ namespace DataService.Data.Migrations
                     b.Property<DateTimeOffset>("First1MinCandleDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsEnableToLoad")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");

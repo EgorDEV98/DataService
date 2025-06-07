@@ -8,22 +8,27 @@ public class Share
     /// <summary>
     /// Идентификатор
     /// </summary>
-    public Guid Id { get; init; }   
+    public Guid Id { get; set; }   
     
     /// <summary>
     /// FIGI-идентификатор инструмента.
     /// </summary>
-    public string Figi { get; init; } = null!;
+    public string Figi { get; set; } = null!;
     
     /// <summary>
     /// Тикер инструмента.
     /// </summary>
-    public string Ticker { get; init; } = null!;
+    public string Ticker { get; set; } = null!;
     
     /// <summary>
     /// Название инструмента
     /// </summary>
-    public string Name { get; init; } = null!;
+    public string Name { get; set; } = null!;
+    
+    /// <summary>
+    /// Признак включения в загрузку
+    /// </summary>
+    public bool IsEnableToLoad { get; set; }
     
     /// <summary>
     /// Первая минутная свеча

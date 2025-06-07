@@ -1,4 +1,5 @@
 using DataService.Integration.Interfaces;
+using DataService.Integration.Tinkoff.Limiters;
 using DataService.Integration.Tinkoff.Options;
 using DataService.Integration.Tinkoff.Provider;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,9 @@ public static class Entry
     {
         services.AddTinkoffClient(configuration);
         services.AddProviders();
+
+        services.AddAutoMapper(typeof(Entry).Assembly);
+        services.AddSingleton<MarketDataRateLimiter>();
         
         
         return services;

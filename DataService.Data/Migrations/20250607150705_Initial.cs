@@ -19,6 +19,7 @@ namespace DataService.Data.Migrations
                     Figi = table.Column<string>(type: "text", nullable: false),
                     Ticker = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    IsEnableToLoad = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     First1MinCandleDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     First1DayCandleDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },

@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Integration.Tin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Contracts", "DataService.Contracts\DataService.Contracts.csproj", "{A1D4A64E-B482-4A9D-99A6-B4C2EA7FFB38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Tests", "DataService.Tests\DataService.Tests.csproj", "{55F1F868-BA6D-4C5B-8D67-3098B2DB901F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,9 +42,5 @@ Global
 		{A1D4A64E-B482-4A9D-99A6-B4C2EA7FFB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1D4A64E-B482-4A9D-99A6-B4C2EA7FFB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1D4A64E-B482-4A9D-99A6-B4C2EA7FFB38}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55F1F868-BA6D-4C5B-8D67-3098B2DB901F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55F1F868-BA6D-4C5B-8D67-3098B2DB901F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55F1F868-BA6D-4C5B-8D67-3098B2DB901F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55F1F868-BA6D-4C5B-8D67-3098B2DB901F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

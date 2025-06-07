@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataService.Data.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250607084418_Initial")]
+    [Migration("20250607150705_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -83,6 +83,11 @@ namespace DataService.Data.Migrations
 
                     b.Property<DateTimeOffset>("First1MinCandleDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsEnableToLoad")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
