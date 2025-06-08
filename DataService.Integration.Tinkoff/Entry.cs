@@ -27,6 +27,7 @@ public static class Entry
     private static void AddProviders(this IServiceCollection services)
     {
         services.AddScoped<IShareProvider, ShareProvider>();
+        services.AddScoped<ICandleProvider, CandleProvider>();
     }
 
     private static void AddTinkoffClient(this IServiceCollection services, IConfiguration configuration)

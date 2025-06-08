@@ -15,22 +15,22 @@ public class Candle
     /// <summary>
     /// Цена открытия
     /// </summary>
-    public double Open { get; init; }
+    public decimal Open { get; init; }
     
     /// <summary>
     /// Верхняя цена
     /// </summary>
-    public double High { get; init; }
+    public decimal High { get; init; }
     
     /// <summary>
     /// Нижняя цена
     /// </summary>
-    public double Low { get; init; }
+    public decimal Low { get; init; }
     
     /// <summary>
     /// Цена закрытия
     /// </summary>
-    public double Close { get; init; }
+    public decimal Close { get; init; }
     
     /// <summary>
     /// Объем

@@ -33,10 +33,10 @@ namespace DataService.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Open = table.Column<double>(type: "double precision", nullable: false),
-                    High = table.Column<double>(type: "double precision", nullable: false),
-                    Low = table.Column<double>(type: "double precision", nullable: false),
-                    Close = table.Column<double>(type: "double precision", nullable: false),
+                    Open = table.Column<decimal>(type: "numeric", nullable: false),
+                    High = table.Column<decimal>(type: "numeric", nullable: false),
+                    Low = table.Column<decimal>(type: "numeric", nullable: false),
+                    Close = table.Column<decimal>(type: "numeric", nullable: false),
                     Volume = table.Column<long>(type: "bigint", nullable: false),
                     Time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Interval = table.Column<string>(type: "character varying(10)", nullable: false),

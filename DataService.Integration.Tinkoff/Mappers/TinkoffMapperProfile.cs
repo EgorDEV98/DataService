@@ -16,7 +16,15 @@ public class TinkoffMapperProfile : Profile
             .ForMember(d => d.ClassCode, o => o.MapFrom(s => s.ClassCode))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Name))
             .ForMember(d => d.CountryOfRisk, o => o.MapFrom(s => s.CountryOfRisk))
-            .ForMember(d => d.First1MinCandleDate, o => o.MapFrom(s => s.First1MinCandleDate.ToDateTimeOffset()))
-            .ForMember(d => d.First1DayCandleDate, o => o.MapFrom(s => s.First1DayCandleDate.ToDateTimeOffset()));
+            .ForMember(d => d.First1MinCandleDate, o => o.MapFrom(s => s.First1MinCandleDate.ToDateTimeOffset().AddHours(3)))
+            .ForMember(d => d.First1DayCandleDate, o => o.MapFrom(s => s.First1DayCandleDate.ToDateTimeOffset().AddHours(3)));
+
+        CreateMap<HistoricCandle, CandleDto>()
+            .ForMember(d => d.Close, o => o.MapFrom(s => s.Close))
+            .ForMember(d => d.Open, o => o.MapFrom(s => s.Open))
+            .ForMember(d => d.Volume, o => o.MapFrom(s => s.Volume))
+            .ForMember(d => d.High, o => o.MapFrom(s => s.High))
+            .ForMember(d => d.Low, o => o.MapFrom(s => s.Low))
+            .ForMember(d => d.Time, o => o.MapFrom(s => s.Time.ToDateTimeOffset().AddHours(3)));
     }
 }

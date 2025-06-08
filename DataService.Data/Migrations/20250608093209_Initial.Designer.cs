@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataService.Data.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250607150705_Initial")]
+    [Migration("20250608093209_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -31,11 +31,11 @@ namespace DataService.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("Close")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Close")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("High")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("High")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Interval")
                         .IsRequired()
@@ -45,11 +45,11 @@ namespace DataService.Data.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(20)");
 
-                    b.Property<double>("Low")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Low")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("Open")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Open")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("ShareId")
                         .HasColumnType("uuid");

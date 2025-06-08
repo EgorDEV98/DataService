@@ -28,11 +28,11 @@ namespace DataService.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("Close")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Close")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("High")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("High")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Interval")
                         .IsRequired()
@@ -42,11 +42,11 @@ namespace DataService.Data.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(20)");
 
-                    b.Property<double>("Low")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Low")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("Open")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Open")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("ShareId")
                         .HasColumnType("uuid");
