@@ -1,15 +1,10 @@
-namespace DataService.Integration.Models;
+namespace DataService.Contracts.Models.Response;
 
 /// <summary>
-/// ДТО свечи
+/// Свеча
 /// </summary>
-public class CandleDto
+public class CandleResponse
 {
-    /// <summary>
-    /// Фиги
-    /// </summary>
-    public string Figi { get; set; }
-    
     /// <summary>
     /// Цена открытия
     /// </summary>

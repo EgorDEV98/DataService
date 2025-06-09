@@ -18,7 +18,7 @@ public class TinkoffOptions
     /// <summary>
     /// Режим песочницы
     /// </summary>
-    public bool Sandbox { get; set; } = false;
+    public bool Sandbox { get; set; }
 
     /// <summary>
     /// Валидация полей

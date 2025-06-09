@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDataLayer(builder.Configuration);
 builder.Services.AddApplicationLayer(builder.Configuration);
 builder.Services.AddTinkoffIntegration(builder.Configuration);
+builder.Services.AddControllers();
 
 var app = builder.Build();
 await app.Services.ApplyMigrationAsync();
@@ -20,8 +21,11 @@ await using var scope = app.Services.CreateAsyncScope();
 var service = scope.ServiceProvider.GetRequiredService<ISyncShareService>();
 await service.SyncSharesAsync();
 
+app.MapControllers();
 app.UseSwagger();
 app.UseSwaggerUI();
+
+
 
 app.UseHttpsRedirection();
 app.Run();

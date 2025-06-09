@@ -98,8 +98,8 @@ public class SyncHistoryCandlesWorker(
     private DataService.Integration.Enums.CandleInterval Convert(CandleInterval interval)
         => interval switch
         {
-            CandleInterval._1Min => DataService.Integration.Enums.CandleInterval._1Min,
-            CandleInterval._15Min => DataService.Integration.Enums.CandleInterval._15Min,
+            CandleInterval._1Min => Integration.Enums.CandleInterval._1Min,
+            CandleInterval._15Min => Integration.Enums.CandleInterval._15Min,
             _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, null)
         };
     private static DateTimeOffset GetToDate(CandleInterval interval, DateTimeOffset from)
@@ -125,7 +125,7 @@ public class SyncHistoryCandlesWorker(
         // 1. Последняя загруженная свеча
         // 2. Год назад
         // 3. Если свечи меньше чем год назад, тогда первую свечу 
-        var oneHalfYearAgoDate = DateTime.UtcNow.AddMonths(-1).Date;
+        var oneHalfYearAgoDate = DateTime.UtcNow.AddMonths(-3).Date;
         var firstCandleDate = share.First1MinCandleDate.Date;
         return lastLoadCandle?.UtcDateTime.Date 
                        ?? (firstCandleDate > oneHalfYearAgoDate ? firstCandleDate : oneHalfYearAgoDate);

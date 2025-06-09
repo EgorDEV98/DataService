@@ -1,4 +1,5 @@
 using AutoMapper;
+using DataService.Application.Extensions;
 using DataService.Application.Interfaces;
 using DataService.Application.Options;
 using DataService.Data;
@@ -41,6 +42,13 @@ public class SyncShareService(
         // Получаем акции от провайдера
         var providerShares = await shareProvider.GetSharesAsync(ct);
 
+        var filteredShares = providerShares
+            .WhereIf(options.IsQualInvestor.HasValue, x => x.ForQualInvestor == options.IsQualInvestor)
+            .WhereIf(options.IncludesCurrency is { Length: > 0 }, x => options.IncludesCurrency!.Contains(x.Currency.ToUpper()))
+            .WhereIf(options.IncludesClassCode is { Length: > 0 }, x => options.IncludesClassCode!.Contains(x.ClassCode.ToUpper()))
+            .WhereIf(options.IncludesCountryCode is { Length: > 0 }, x => options.IncludesCountryCode!.Contains(x.CountryOfRisk.ToUpper()))
+            .ToArray();
+
         // Если фильтр тикеров не задан — по умолчанию включить все
         var includesTickers = options.IncludesTicker is { Length: > 0 }
             ? options.IncludesTicker.ToHashSet(StringComparer.OrdinalIgnoreCase)
@@ -48,7 +56,7 @@ public class SyncShareService(
 
         var newShares = new List<Share>();
 
-        foreach (var providerShare in providerShares)
+        foreach (var providerShare in filteredShares)
         {
             var ticker = providerShare.Ticker;
 

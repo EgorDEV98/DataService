@@ -20,7 +20,6 @@ public static class Entry
         services.AddAutoMapper(typeof(Entry).Assembly);
         services.AddSingleton<MarketDataRateLimiter>();
         
-        
         return services;
     }
 
@@ -28,6 +27,8 @@ public static class Entry
     {
         services.AddScoped<IShareProvider, ShareProvider>();
         services.AddScoped<ICandleProvider, CandleProvider>();
+        services.AddScoped<ICandleStreamProvider, CandleStreamProvider>();
+        services.AddScoped<IOrderBookProvider, TinkoffOrderBookProvider>();
     }
 
     private static void AddTinkoffClient(this IServiceCollection services, IConfiguration configuration)

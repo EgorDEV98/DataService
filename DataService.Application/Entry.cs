@@ -3,6 +3,8 @@ using DataService.Application.Options;
 using DataService.Application.Provider;
 using DataService.Application.Services;
 using DataService.Application.Workers;
+using DataService.Application.Workers.RealTimeWorkers;
+using DataService.Data.Enum;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -18,6 +20,12 @@ public static class Entry
         services.AddScoped<ISyncShareService, SyncShareService>();
         services.AddAutoMapper(typeof(Entry).Assembly);
         services.AddWorkers(configuration);
+        
+        services.AddSingleton<ICandleBufferFlusher, CandleBufferFlusher>();
+        services.AddScoped<OneMinuteRealtimeCandleWorker>();
+        services.AddScoped<FifteenMinuteRealtimeCandleWorker>();
+        services.AddScoped<CandlesService>();
+        services.AddScoped<SharesService>();
         
         return services;
     }
@@ -44,9 +52,40 @@ public static class Entry
                 .ForJob(historyCandleWorkerJobKey)
                 .WithIdentity($"{nameof(SyncHistoryCandlesWorker)}-on-startup-trigger")
                 .StartNow());
+            
+            var sessionStart = ParseTimeUtc(cronOptions.SessionStartTime);
+            var cronExpression = $"{sessionStart.Second} {sessionStart.Minute} {sessionStart.Hour} ? * *";
+            
+            // === OneMinuteRealtimeCandleWorker
+            var realtimeKey = new JobKey(nameof(OneMinuteRealtimeCandleWorker));
+            q.AddJob<OneMinuteRealtimeCandleWorker>(opts => opts.WithIdentity(realtimeKey));
+            
+            q.AddTrigger(opts => opts
+                .ForJob(realtimeKey)
+                .WithIdentity($"{nameof(OneMinuteRealtimeCandleWorker)}-scheduled-trigger")
+                .WithCronSchedule(cronExpression, x => x.WithMisfireHandlingInstructionFireAndProceed()));
+
+            q.AddTrigger(opts => opts
+                .ForJob(realtimeKey)
+                .WithIdentity($"{nameof(OneMinuteRealtimeCandleWorker)}-startup-trigger")
+                .StartNow());
+            
+            var realtime15Key = new JobKey(nameof(FifteenMinuteRealtimeCandleWorker));
+            q.AddJob<FifteenMinuteRealtimeCandleWorker>(opts => opts.WithIdentity(realtime15Key));
+            
+            q.AddTrigger(opts => opts
+                .ForJob(realtime15Key)
+                .WithIdentity($"{nameof(FifteenMinuteRealtimeCandleWorker)}-scheduled-trigger")
+                .WithCronSchedule(cronExpression, x => x.WithMisfireHandlingInstructionFireAndProceed()));
+            
+            q.AddTrigger(opts => opts
+                .ForJob(realtime15Key)
+                .WithIdentity($"{nameof(FifteenMinuteRealtimeCandleWorker)}-startup-trigger")
+                .StartNow());
         });
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
-
+        
+       
         return services;
     }
 
@@ -54,7 +93,17 @@ public static class Entry
     {
         var syncShareOptions = configuration.GetSection(nameof(SyncShareOptions));
         services.Configure<SyncShareOptions>(syncShareOptions.Bind);
+        
+        var cronOptions = configuration.GetSection(nameof(CronOptions));
+        services.Configure<CronOptions>(cronOptions.Bind);
 
         return services;
+    }
+    
+    private static DateTimeOffset ParseTimeUtc(TimeSpan time)
+    {
+        var today = DateTime.UtcNow.Date;
+        var target = today.Add(time);
+        return DateTime.SpecifyKind(target, DateTimeKind.Utc);
     }
 }

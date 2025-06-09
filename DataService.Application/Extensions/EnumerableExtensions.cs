@@ -6,5 +6,5 @@ public static class EnumerableExtensions
         this IEnumerable<T> source,
         bool condition,
         Func<T, bool> predicate)
-    => condition ? source.Where(predicate) : source;
+        => condition ? source.Where(predicate) : source;
 }
