@@ -1,9 +1,12 @@
 using DataService.Application.Interfaces;
+using DataService.Application.Mq.Publisher;
 using DataService.Application.Options;
 using DataService.Application.Provider;
 using DataService.Application.Services;
 using DataService.Application.Workers;
 using DataService.Application.Workers.RealTimeWorkers;
+using DataService.Contracts.Models.Mq;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -17,9 +20,50 @@ public static class Entry
         services.AddCustomOptions(configuration);
         services.AddWorkers(configuration);
         services.AddServices();
-        services.AddSingleton<ICandleBufferFlusher, CandleBufferFlusher>();
+        services.AddRabbit(configuration);
         
         services.AddAutoMapper(typeof(Entry).Assembly);
+        return services;
+    }
+
+    private static IServiceCollection AddRabbit(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<CandlePublisher>();
+        services.AddScoped<ShareSyncedNotificatorPublisher>();
+        
+        var mqOptions = configuration
+            .GetSection(nameof(RabbitMqOptions))
+            .Get<RabbitMqOptions>() ?? throw new NullReferenceException(nameof(RabbitMqOptions));
+
+        services.AddMassTransit(cfg =>
+        {
+            cfg.UsingRabbitMq((ctx, bus) =>
+            {
+                bus.Host(mqOptions.Host, mqOptions.VirtualHost, h =>
+                {
+                    h.Username(mqOptions.Username);
+                    h.Password(mqOptions.Password);
+                });
+
+                bus.ConfigureEndpoints(ctx);
+                
+                bus.Message<NewCandle>(x => { x.SetEntityName("candles"); });
+                bus.Publish<NewCandle>(x => { x.ExchangeType = "fanout"; });
+                
+                bus.Message<ShareSynced>(x => { x.SetEntityName("shares.synced"); });
+                bus.Publish<ShareSynced>(x => { x.ExchangeType = "fanout"; });
+                
+                bus.ReceiveEndpoint("candles-expiring", e =>
+                {
+                    e.ConfigureConsumeTopology = false;
+                    e.SetQueueArgument("x-message-ttl", 60000);
+                    e.Bind("candles");
+                });
+                
+                bus.ConfigureEndpoints(ctx);
+            });
+        });
+        
         return services;
     }
 
@@ -28,6 +72,7 @@ public static class Entry
         services.AddScoped<CandlesService>();
         services.AddScoped<SharesService>();
         services.AddScoped<ISyncShareService, SyncShareService>();
+        services.AddSingleton<ICandleBufferFlusher, CandleBufferFlusher>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
         services.AddScoped<OrderBookService>();
 
@@ -108,6 +153,9 @@ public static class Entry
         var sessionOptions = configuration.GetSection(nameof(SessionOptions));
         services.Configure<SessionOptions>(sessionOptions.Bind);
 
+        var rabbitMqOptions = configuration.GetSection(nameof(RabbitMqOptions));
+        services.Configure<RabbitMqOptions>(rabbitMqOptions.Bind);
+        
         return services;
     }
     

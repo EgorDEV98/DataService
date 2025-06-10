@@ -1,5 +1,7 @@
 using DataService.Application.Interfaces;
+using DataService.Application.Mq.Publisher;
 using DataService.Contracts.Models.Enums;
+using DataService.Contracts.Models.Mq;
 using DataService.Data;
 using DataService.Data.Entities;
 using DataService.Data.Extensions;
@@ -38,6 +40,7 @@ public class SyncHistoryCandlesWorker(
         await using var scope = serviceProvider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         var candleProvider = scope.ServiceProvider.GetRequiredService<ICandleProvider>();
+        var shareSyncedNotificator = scope.ServiceProvider.GetRequiredService<ShareSyncedNotificatorPublisher>();
 
         // Список акций включенных в загрузку
         var shares = await context.Shares
@@ -48,7 +51,15 @@ public class SyncHistoryCandlesWorker(
 
         // Проходимся по всем акциям
         foreach (var share in shares)
+        {
             await LoadCandle(context, share, candleProvider, ct);
+            await shareSyncedNotificator.PublishAsync(new ShareSynced()
+            {
+                Id = share.Id,
+                Ticker = share.Ticker,
+            }, ct);
+        }
+            
     }
 
     private async Task LoadCandle(PostgresDbContext context, Share share, ICandleProvider candleProvider, CancellationToken ct)

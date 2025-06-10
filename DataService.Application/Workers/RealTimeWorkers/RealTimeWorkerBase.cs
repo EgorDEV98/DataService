@@ -1,10 +1,13 @@
 using DataService.Application.Interfaces;
+using DataService.Application.Mq.Publisher;
 using DataService.Application.Options;
 using DataService.Contracts.Models.Enums;
+using DataService.Contracts.Models.Mq;
 using DataService.Data;
 using DataService.Data.Entities;
 using DataService.Integration.Interfaces;
 using DataService.Integration.Models;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -47,11 +50,12 @@ public abstract class RealTimeCandleWorkerBase<TWorker>(
         await using var scope = serviceProvider.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         var stream = scope.ServiceProvider.GetRequiredService<ICandleStreamProvider>();
+        var publisher = scope.ServiceProvider.GetRequiredService<CandlePublisher>();
 
         var shares = await db.Shares.AsNoTracking().Where(s => s.IsEnableToLoad).ToListAsync(ct);
         var figiMap = shares.ToDictionary(x => x.Figi, x => x.Id);
 
-        stream.OnCandleReceived += candle =>
+        stream.OnCandleReceived += async candle =>
         {
             if (figiMap.TryGetValue(candle.Figi, out var shareId))
             {
@@ -68,9 +72,17 @@ public abstract class RealTimeCandleWorkerBase<TWorker>(
                     LoadType = LoadType.RealtimeSync,
                     Interval = interval
                 });
+                
+                await publisher.PublishAsync(new NewCandle(
+                    candle.Figi,
+                    candle.Time,
+                    interval,
+                    candle.Open,
+                    candle.High,
+                    candle.Low,
+                    candle.Close,
+                    candle.Volume), ct);
             }
-
-            return Task.CompletedTask;
         };
 
         await flusher.StartAsync(ct);
