@@ -32,5 +32,15 @@ public class ApplicationMapperProfile : Profile
             .ForMember(d => d.Figi, o => o.MapFrom(s => s.Figi))
             .ForMember(d => d.Ticker, o => o.MapFrom(s => s.Ticker))
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id));
+
+        CreateMap<OrderDto, OrderResponse>()
+            .ForMember(d => d.Price, o => o.MapFrom(s => s.Price))
+            .ForMember(d => d.Quantity, o => o.MapFrom(s => s.Quantity));
+        
+        CreateMap<OrderBookDto, OrderBookResponse>()
+            .ForMember(d =>d.Asks, o => o.MapFrom(s => s.Asks))
+            .ForMember(d => d.Bids, o => o.MapFrom(s => s.Bids))
+            .ForMember(d => d.Figi, o => o.MapFrom(s => s.Figi))
+            .ForMember(d => d.Depth, o => o.MapFrom(s => s.Depth));
     }
 }

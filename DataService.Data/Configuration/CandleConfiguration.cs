@@ -1,6 +1,6 @@
+using DataService.Contracts.Models.Enums;
 using DataService.Data.Common;
 using DataService.Data.Entities;
-using DataService.Data.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -14,9 +14,9 @@ public class CandleConfiguration : IEntityTypeConfiguration<Candle>
 {
     public void Configure(EntityTypeBuilder<Candle> builder)
     {
-        var intervalConverter = new ValueConverter<CandleInterval, string>(
+        var intervalConverter = new ValueConverter<Interval, string>(
             x => EnumConverters.ToEnumString(x),
-            x => EnumConverters.ToEnum<CandleInterval>(x),
+            x => EnumConverters.ToEnum<Interval>(x),
             new ConverterMappingHints(size: 10, unicode: false));
         
         var loadTypeConverter = new ValueConverter<LoadType, string>(

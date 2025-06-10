@@ -14,7 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DataService.Integration\DataService.Integration.csproj"/>
+      <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj" />
+      <ProjectReference Include="..\DataService.Integration\DataService.Integration.csproj" />
     </ItemGroup>
 
 </Project>

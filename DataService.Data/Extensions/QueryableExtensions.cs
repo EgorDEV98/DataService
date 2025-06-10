@@ -5,7 +5,7 @@ namespace DataService.Data.Extensions;
 public static class QueryableExtensions
 {
     /// <summary>
-    /// Выполняет фильтацию по условию
+    /// Выполняет фильтрацию по условию
     /// </summary>
     /// <param name="source"></param>
     /// <param name="condition">Условие при котором фильтрация будет выполняться</param>

@@ -71,7 +71,7 @@ public static class DbContextExtensions
         string tableFullName = string.IsNullOrEmpty(schema)
             ? Quote(tableName)
             : $"{Quote(schema)}.{Quote(tableName)}";
-        string columnList = string.Join(", ", columns.Select(c => Quote(c)));
+        string columnList = string.Join(", ", columns.Select(Quote));
 
         // Работаем через соединение Npgsql
         var conn = context.Database.GetDbConnection();
@@ -102,7 +102,7 @@ public static class DbContextExtensions
                         var val = prop.PropertyInfo?.GetValue(entity);
                         if (prop.ClrType.IsEnum && val != null)
                         {
-                            val = EnumConverters.ToEnumString((System.Enum)val);
+                            val = EnumConverters.ToEnumString((Enum)val);
                         }
                         // Параметр без @ в названии; в SQL используем @pX
                         string paramName = "p" + paramIndex;
@@ -136,6 +136,6 @@ public static class DbContextExtensions
         return;
 
         // Подготовка имен (экранирование двойными кавычками)
-        string Quote(string name) => $"\"{name.Replace("\"", "\"\"")}\"";
+        string Quote(string? name) => $"\"{name.Replace("\"", "\"\"")}\"";
     }
 }

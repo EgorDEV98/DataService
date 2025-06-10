@@ -1,7 +1,7 @@
 using DataService.Application.Interfaces;
+using DataService.Contracts.Models.Enums;
 using DataService.Data;
 using DataService.Data.Entities;
-using DataService.Data.Enum;
 using DataService.Data.Extensions;
 using DataService.Integration.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +20,9 @@ public class SyncHistoryCandlesWorker(
     IGuidProvider guidProvider) : IJob
 {
 
-    private readonly CandleInterval[] IntervalsForLoad = [
-        CandleInterval._1Min,
-        CandleInterval._15Min
+    private readonly Interval[] _intervalsForLoad = [
+        Interval._1Min,
+        Interval._15Min
     ];
     
     public async Task Execute(IJobExecutionContext context)
@@ -53,7 +53,7 @@ public class SyncHistoryCandlesWorker(
 
     private async Task LoadCandle(PostgresDbContext context, Share share, ICandleProvider candleProvider, CancellationToken ct)
     {
-        foreach (var interval in IntervalsForLoad)
+        foreach (var interval in _intervalsForLoad)
         {
             // Получаем последнюю загруженную свечу будет являться FROM датой
             // В зависимости от интервала устанавливаем точку TO
@@ -68,11 +68,11 @@ public class SyncHistoryCandlesWorker(
         }
     }
 
-    private async Task LoadCandleByInterval(PostgresDbContext context, Share share, CandleInterval interval, DateTimeOffset from, ICandleProvider candleProvider, CancellationToken ct)
+    private async Task LoadCandleByInterval(PostgresDbContext context, Share share, Interval interval, DateTimeOffset from, ICandleProvider candleProvider, CancellationToken ct)
     {
         // Из интервала определяем дату TO
         var toDate = GetToDate(interval, from);
-        var candles = (await candleProvider.GetCandlesAsync(share.Figi, Convert(interval), from, toDate, ct))
+        var candles = (await candleProvider.GetCandlesAsync(share.Figi, interval, from, toDate, ct))
             .Select(x => new Candle()
             {
                 Close = x.Close,
@@ -94,24 +94,17 @@ public class SyncHistoryCandlesWorker(
             interval);
 
     }
-
-    private DataService.Integration.Enums.CandleInterval Convert(CandleInterval interval)
+    
+    private static DateTimeOffset GetToDate(Interval interval, DateTimeOffset from)
         => interval switch
         {
-            CandleInterval._1Min => Integration.Enums.CandleInterval._1Min,
-            CandleInterval._15Min => Integration.Enums.CandleInterval._15Min,
-            _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, null)
-        };
-    private static DateTimeOffset GetToDate(CandleInterval interval, DateTimeOffset from)
-        => interval switch
-        {
-            CandleInterval._1Min => from.AddDays(1),
-            CandleInterval._15Min => from.AddDays(21),
+            Interval._1Min => from.AddDays(1),
+            Interval._15Min => from.AddDays(21),
             _ => throw new ArgumentOutOfRangeException()
         };
 
     private async Task<DateTimeOffset> GetLastLoadCandle(PostgresDbContext context, Share share,
-        CandleInterval interval, CancellationToken ct)
+        Interval interval, CancellationToken ct)
     {
         // Получаем последнюю загруженную свечу учитывая интервал
         var lastLoadCandle = await context.Candles

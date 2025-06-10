@@ -7,20 +7,15 @@ namespace DataService.Integration.Tinkoff.Limiters;
 /// </summary>
 public class MarketDataRateLimiter
 {
-    private readonly TokenBucketRateLimiter _limiter;
-    
-    public MarketDataRateLimiter()
+    private readonly TokenBucketRateLimiter _limiter = new(new TokenBucketRateLimiterOptions
     {
-        _limiter = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions
-        {
-            TokenLimit = 600,
-            TokensPerPeriod = 600,
-            ReplenishmentPeriod = TimeSpan.FromMinutes(1),
-            AutoReplenishment = true,
-            QueueLimit = 1000,
-            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
-        });
-    }
+        TokenLimit = 600,
+        TokensPerPeriod = 600,
+        ReplenishmentPeriod = TimeSpan.FromMinutes(1),
+        AutoReplenishment = true,
+        QueueLimit = 1000,
+        QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+    });
 
     /// <summary>
     /// Ожидание

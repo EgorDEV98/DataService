@@ -37,6 +37,15 @@ public class TinkoffMapperProfile : Profile
             .ForMember(d => d.Low, o => o.MapFrom(s => s.Low))
             .ForMember(d => d.Time, o => o.MapFrom(s => s.Time.ToDateTimeOffset()))
             .ForMember(d => d.Figi, o => o.MapFrom(s => s.Figi));
+
+        CreateMap<Order, OrderDto>()
+            .ForMember(d => d.Price, o => o.MapFrom(s => s.Price))
+            .ForMember(d => d.Quantity, o => o.MapFrom(s => s.Quantity));
         
+        CreateMap<GetOrderBookResponse, OrderBookDto>()
+            .ForMember(d => d.Asks, o => o.MapFrom(s => s.Asks))
+            .ForMember(d => d.Bids, o => o.MapFrom(s => s.Bids))
+            .ForMember(d => d.Depth, o => o.MapFrom(s => s.Depth))
+            .ForMember(d => d.Figi, o => o.MapFrom(s => s.Figi));
     }
 }

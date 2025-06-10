@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace DataService.Data.Enum;
+namespace DataService.Contracts.Models.Enums;
 
 /// <summary>
 /// Тип загрузки свечи

@@ -1,14 +1,14 @@
 using System.Runtime.Serialization;
 
-namespace DataService.Integration.Enums;
+namespace DataService.Contracts.Models.Enums;
 
 /// <summary>
 /// Интервал свечи
 /// </summary>
-public enum CandleInterval
+public enum Interval
 {
     /// <summary>
-    /// 1 минута
+    /// 1 Минута
     /// </summary>
     [EnumMember(Value = "1_MIN")]
     _1Min,

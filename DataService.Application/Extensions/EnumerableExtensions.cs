@@ -1,5 +1,8 @@
 namespace DataService.Application.Extensions;
 
+/// <summary>
+/// Фильтры для IEnumerable
+/// </summary>
 public static class EnumerableExtensions
 {
     public static IEnumerable<T> WhereIf<T>(

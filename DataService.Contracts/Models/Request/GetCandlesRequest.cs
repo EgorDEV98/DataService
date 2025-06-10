@@ -15,7 +15,7 @@ public class GetCandlesRequest
     /// <summary>
     /// Интервал
     /// </summary>
-    public required CandleInterval Interval { get; set; }
+    public required Interval Interval { get; set; }
     
     /// <summary>
     /// С какого числа

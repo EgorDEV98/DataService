@@ -8,19 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace DataService.Application.Services;
 
-public class CandleBufferFlusher : ICandleBufferFlusher
+public class CandleBufferFlusher(IServiceProvider sp, ILogger<CandleBufferFlusher> logger) : ICandleBufferFlusher
 {
     private readonly ConcurrentQueue<Candle> _queue = new();
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<CandleBufferFlusher> _logger;
     private CancellationTokenSource? _cts;
     private Task? _flushTask;
-
-    public CandleBufferFlusher(IServiceProvider sp, ILogger<CandleBufferFlusher> logger)
-    {
-        _serviceProvider = sp;
-        _logger = logger;
-    }
 
     public void Enqueue(Candle candle) => _queue.Enqueue(candle);
 
@@ -34,10 +26,10 @@ public class CandleBufferFlusher : ICandleBufferFlusher
     public async Task StopAsync()
     {
         if (_cts is null) return;
-        _cts.Cancel();
+        await _cts.CancelAsync();
 
         try { if (_flushTask is not null) await _flushTask; }
-        catch (Exception ex) { _logger.LogWarning(ex, "Flush loop stopped with error"); }
+        catch (Exception ex) { logger.LogWarning(ex, "Flush loop stopped with error"); }
 
         _cts.Dispose();
         _cts = null;
@@ -55,7 +47,7 @@ public class CandleBufferFlusher : ICandleBufferFlusher
             catch (TaskCanceledException) { }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Flush loop error");
+                logger.LogError(ex, "Flush loop error");
             }
         }
     }
@@ -68,10 +60,10 @@ public class CandleBufferFlusher : ICandleBufferFlusher
         while (_queue.TryDequeue(out var c)) candles.Add(c);
         if (candles.Count == 0) return;
 
-        await using var scope = _serviceProvider.CreateAsyncScope();
+        await using var scope = sp.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         await db.BulkInsertIgnoreDuplicatesAsync(candles, cancellationToken: ct);
 
-        _logger.LogInformation("Saved {Count} candles", candles.Count);
+        logger.LogInformation("Добавлено {Count} свечей", candles.Count);
     }
 }

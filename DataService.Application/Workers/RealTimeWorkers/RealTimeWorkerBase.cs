@@ -1,9 +1,8 @@
 using DataService.Application.Interfaces;
 using DataService.Application.Options;
+using DataService.Contracts.Models.Enums;
 using DataService.Data;
 using DataService.Data.Entities;
-using DataService.Data.Enum;
-using DataService.Integration.Enums;
 using DataService.Integration.Interfaces;
 using DataService.Integration.Models;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +10,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
-using CandleInterval = DataService.Data.Enum.CandleInterval;
 
 namespace DataService.Application.Workers.RealTimeWorkers;
 
 public abstract class RealTimeCandleWorkerBase<TWorker>(
     IServiceProvider serviceProvider,
     ILogger<TWorker> logger,
-    IOptions<CronOptions> options,
+    IOptions<CronOptions> cronOptions,
+    IOptions<SessionOptions> sessionOptions,
     ICandleBufferFlusher flusher,
-    CandleInterval interval,
-    SubscribeInterval subscribeInterval)
+    Interval interval,
+    Interval subscribeInterval)
     where TWorker : class
 {
     public async Task Execute(IJobExecutionContext context)
@@ -85,7 +84,7 @@ public abstract class RealTimeCandleWorkerBase<TWorker>(
             }),
             ct);
 
-        var end = DateTimeOffset.UtcNow.Date.Add(options.Value.SessionEndTime);
+        var end = DateTimeOffset.UtcNow.Date.Add(sessionOptions.Value.SessionEndTime);
         var delay = end - DateTimeOffset.UtcNow;
 
         if (delay > TimeSpan.Zero)
@@ -100,11 +99,11 @@ public abstract class RealTimeCandleWorkerBase<TWorker>(
         logger.LogInformation("[{Worker}] Завершён", typeof(TWorker).Name);
     }
 
-    protected bool IsWithinSession()
+    private bool IsWithinSession()
     {
         var now = DateTimeOffset.UtcNow.TimeOfDay;
-        var start = options.Value.SessionStartTime;
-        var end = options.Value.SessionEndTime;
+        var start = sessionOptions.Value.SessionStartTime;
+        var end = sessionOptions.Value.SessionEndTime;
         return now >= start && now <= end;
     }
 }

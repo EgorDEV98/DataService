@@ -1,4 +1,4 @@
-using DataService.Data.Enum;
+using DataService.Contracts.Models.Enums;
 
 namespace DataService.Data.Entities;
 
@@ -45,7 +45,7 @@ public class Candle
     /// <summary>
     /// Интервал свечи
     /// </summary>
-    public CandleInterval Interval { get; init; }
+    public Interval Interval { get; init; }
     
     /// <summary>
     /// Тип загрузки

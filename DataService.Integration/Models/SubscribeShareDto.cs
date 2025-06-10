@@ -1,4 +1,4 @@
-using DataService.Integration.Enums;
+using DataService.Contracts.Models.Enums;
 
 namespace DataService.Integration.Models;
 
@@ -12,5 +12,5 @@ public class SubscribeShareDto
     /// <summary>
     /// Интервал
     /// </summary>
-    public SubscribeInterval Interval { get; set; }
+    public Interval Interval { get; set; }
 }

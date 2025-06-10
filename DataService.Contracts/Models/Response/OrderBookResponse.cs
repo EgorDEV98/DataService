@@ -1,6 +1,6 @@
-namespace DataService.Integration.Models;
+namespace DataService.Contracts.Models.Response;
 
-public class OrderBookDto
+public class OrderBookResponse
 {
     /// <summary>
     /// Figi
@@ -15,10 +15,10 @@ public class OrderBookDto
     /// <summary>
     /// Биды
     /// </summary>
-    public List<OrderDto> Bids { get; set; }
+    public List<OrderResponse> Bids { get; set; }
     
     /// <summary>
     /// Аски
     /// </summary>
-    public List<OrderDto> Asks { get; set; }
+    public List<OrderResponse> Asks { get; set; }
 }

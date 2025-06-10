@@ -1,8 +1,7 @@
 using AutoMapper;
-using DataService.Integration.Enums;
+using DataService.Contracts.Models.Enums;
 using DataService.Integration.Interfaces;
 using DataService.Integration.Models;
-using DataService.Integration.Tinkoff.Convertors;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Tinkoff.InvestApi;
@@ -64,7 +63,7 @@ public class CandleStreamProvider(ILogger<CandleStreamProvider> logger, InvestAp
                     {
                         new CandleInstrument
                         {
-                            Interval = subscribeShare.Interval.Convert(),
+                            Interval = Convert(subscribeShare.Interval),
                             InstrumentId = subscribeShare.Figi
                         }
                     }
@@ -94,4 +93,12 @@ public class CandleStreamProvider(ILogger<CandleStreamProvider> logger, InvestAp
         _cts = null;
         _stream = null;
     }
+
+    private SubscriptionInterval Convert(Interval interval)
+        => interval switch
+        {
+            Interval._1Min => SubscriptionInterval.OneMinute,
+            Interval._15Min => SubscriptionInterval.FifteenMinutes,
+            _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, null)
+        };
 }

@@ -1,10 +1,9 @@
 using DataService.Application.Interfaces;
 using DataService.Application.Options;
-using DataService.Integration.Enums;
+using DataService.Contracts.Models.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
-using CandleInterval = DataService.Data.Enum.CandleInterval;
 
 namespace DataService.Application.Workers.RealTimeWorkers;
 
@@ -12,10 +11,11 @@ namespace DataService.Application.Workers.RealTimeWorkers;
 public class OneMinuteRealtimeCandleWorker(
     IServiceProvider serviceProvider,
     ILogger<OneMinuteRealtimeCandleWorker> logger,
-    IOptions<CronOptions> options,
+    IOptions<CronOptions> cronOptions,
+    IOptions<SessionOptions> sessionOptions,
     ICandleBufferFlusher flusher)
-    : RealTimeCandleWorkerBase<OneMinuteRealtimeCandleWorker>(serviceProvider, logger, options,
-        flusher, CandleInterval._1Min, SubscribeInterval._1Min), IJob
+    : RealTimeCandleWorkerBase<OneMinuteRealtimeCandleWorker>(serviceProvider, logger, cronOptions, sessionOptions,
+        flusher, Interval._1Min, Interval._1Min), IJob
 {
     public async Task Execute(IJobExecutionContext context) => await base.Execute(context);
 }

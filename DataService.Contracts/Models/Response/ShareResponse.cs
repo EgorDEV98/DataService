@@ -1,5 +1,8 @@
 namespace DataService.Contracts.Models.Response;
 
+/// <summary>
+/// Акция
+/// </summary>
 public class ShareResponse
 {
     /// <summary>

@@ -4,7 +4,6 @@ using DataService.Application.Provider;
 using DataService.Application.Services;
 using DataService.Application.Workers;
 using DataService.Application.Workers.RealTimeWorkers;
-using DataService.Data.Enum;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -16,17 +15,22 @@ public static class Entry
     public static IServiceCollection AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddCustomOptions(configuration);
-        services.AddSingleton<IGuidProvider, GuidProvider>();
-        services.AddScoped<ISyncShareService, SyncShareService>();
-        services.AddAutoMapper(typeof(Entry).Assembly);
         services.AddWorkers(configuration);
-        
+        services.AddServices();
         services.AddSingleton<ICandleBufferFlusher, CandleBufferFlusher>();
-        services.AddScoped<OneMinuteRealtimeCandleWorker>();
-        services.AddScoped<FifteenMinuteRealtimeCandleWorker>();
+        
+        services.AddAutoMapper(typeof(Entry).Assembly);
+        return services;
+    }
+
+    private static IServiceCollection AddServices(this IServiceCollection services)
+    {
         services.AddScoped<CandlesService>();
         services.AddScoped<SharesService>();
-        
+        services.AddScoped<ISyncShareService, SyncShareService>();
+        services.AddSingleton<IGuidProvider, GuidProvider>();
+        services.AddScoped<OrderBookService>();
+
         return services;
     }
 
@@ -35,6 +39,10 @@ public static class Entry
         var cronOptions = configuration
             .GetSection(nameof(CronOptions))
             .Get<CronOptions>() ?? throw new NullReferenceException(nameof(CronOptions));
+        
+        var sessionOptions = configuration
+            .GetSection(nameof(SessionOptions))
+            .Get<SessionOptions>() ?? throw new NullReferenceException(nameof(SessionOptions));
         
         services.AddQuartz(q =>
         {
@@ -53,7 +61,7 @@ public static class Entry
                 .WithIdentity($"{nameof(SyncHistoryCandlesWorker)}-on-startup-trigger")
                 .StartNow());
             
-            var sessionStart = ParseTimeUtc(cronOptions.SessionStartTime);
+            var sessionStart = ParseTimeUtc(sessionOptions.SessionStartTime);
             var cronExpression = $"{sessionStart.Second} {sessionStart.Minute} {sessionStart.Hour} ? * *";
             
             // === OneMinuteRealtimeCandleWorker
@@ -96,6 +104,9 @@ public static class Entry
         
         var cronOptions = configuration.GetSection(nameof(CronOptions));
         services.Configure<CronOptions>(cronOptions.Bind);
+
+        var sessionOptions = configuration.GetSection(nameof(SessionOptions));
+        services.Configure<SessionOptions>(sessionOptions.Bind);
 
         return services;
     }

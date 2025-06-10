@@ -7,14 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DataService.Contracts\DataService.Contracts.csproj" />
-      <ProjectReference Include="..\DataService.Data\DataService.Data.csproj" />
-      <ProjectReference Include="..\DataService.Integration\DataService.Integration.csproj" />
+      <PackageReference Include="Quartz" Version="3.14.0" />
+      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Quartz" Version="3.14.0" />
-      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
+      <ProjectReference Include="..\DataService.Data\DataService.Data.csproj" />
+      <ProjectReference Include="..\DataService.Integration\DataService.Integration.csproj" />
     </ItemGroup>
 
 </Project>
