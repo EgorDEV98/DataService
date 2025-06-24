@@ -1,6 +1,7 @@
 using AutoFixture;
 using DataService.Application.Interfaces;
 using DataService.Application.Models;
+using DataService.Application.Providers;
 using DataService.Application.Services;
 using DataService.Contracts.Models.Enums;
 using DataService.Data;
@@ -33,7 +34,7 @@ public class SharesServiceTests
             .ForEach(b => _fixture.Behaviors.Remove(b));
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-        _service = new SharesService(_dbContext, _sharesProviderMock.Object);
+        _service = new SharesService(_dbContext, _guidProviderMock.Object, _sharesProviderMock.Object);
     }
 
     [Fact]

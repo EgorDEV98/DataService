@@ -18,7 +18,7 @@ public static class BulkExtensions
     /// <typeparam name="T"></typeparam>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public static async Task BulkInsertIgnoreDuplicatesAsync<T>(
+    public static async Task BulkInsertAsync<T>(
         this DbContext context,
         IEnumerable<T> entities,
         int batchSize = 1000,

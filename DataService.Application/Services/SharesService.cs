@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataService.Application.Services;
 
-public class SharesService(PostgresDbContext context, ISharesProvider sharesProvider) : IShareService
+public class SharesService(PostgresDbContext context, IGuidProvider guidProvider, ISharesProvider sharesProvider) : IShareService
 {
     public async Task<Share> GetShareAsync(GetShareParams param, CancellationToken cancellationToken = default)
     {
@@ -47,6 +47,7 @@ public class SharesService(PostgresDbContext context, ISharesProvider sharesProv
         var externalShares = (await sharesProvider.GetSharesAsync(cancellationToken))
             .Select(x => new Share()
             {
+                Id = guidProvider.GetGuid(),
                 Currency = x.Currency,
                 ClassCode = x.ClassCode,
                 CandleLoadStatus = LoadStatus.Disabled,
@@ -64,8 +65,7 @@ public class SharesService(PostgresDbContext context, ISharesProvider sharesProv
                 Sector = x.Sector,
             })
             .ToArray();
-        await context.Shares.AddRangeAsync(externalShares, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.BulkInsertAsync(externalShares, cancellationToken: cancellationToken);
         return true;
     }
 }

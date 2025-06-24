@@ -35,6 +35,8 @@ public class ShareConfiguration : IEntityTypeConfiguration<Share>
         builder.Property(x => x.First1MinCandleDate).IsRequired();
         builder.Property(x => x.First1DayCandleDate).IsRequired();
         builder.Property(x => x.CandleLoadStatus).HasConversion(loadStatusConverter).IsRequired();
+
+        builder.HasIndex(x => x.Ticker).IsUnique();
         
         builder.HasMany(x => x.Candles)
             .WithOne(x => x.Share)

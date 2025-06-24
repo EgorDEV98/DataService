@@ -3,7 +3,6 @@ using DataService.Integration.Models.Request;
 using DataService.Integration.Models.Response;
 using DataService.Integration.Tinkoff.Common;
 using DataService.Integration.Tinkoff.Mappers;
-using Tinkoff.InvestApi;
 using Tinkoff.InvestApi.V1;
 
 namespace DataService.Integration.Tinkoff.Providers;

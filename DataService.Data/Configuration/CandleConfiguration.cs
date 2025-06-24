@@ -34,6 +34,8 @@ public class CandleConfiguration : IEntityTypeConfiguration<Candle>
         builder.Property(x => x.Interval).HasConversion(candleIntervalConverter).IsRequired();
         builder.Property(x => x.LoadType).HasConversion(loadTypeConverter).IsRequired();
 
+        builder.HasIndex(x => new { x.ShareId, x.Interval, x.Time }).IsUnique();
+
         builder.HasOne(x => x.Share)
             .WithMany(x => x.Candles)
             .HasForeignKey(x => x.ShareId);
