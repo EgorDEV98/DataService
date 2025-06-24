@@ -11,4 +11,8 @@
       <ProjectReference Include="..\DataService.Integration\DataService.Integration.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Riok.Mapperly" Version="4.2.1" />
+    </ItemGroup>
+
 </Project>
