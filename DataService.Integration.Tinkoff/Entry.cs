@@ -24,11 +24,13 @@ public static class Entry
 
     private static void AddMappers(this IServiceCollection services)
     {
-        services.AddScoped<ExternalShareMapper>();
+        services.AddSingleton<ExternalShareMapper>();
+        services.AddSingleton<ExternalOrderBookMapper>();
     }
     private static void AddProviders(this IServiceCollection services)
     {
         services.AddScoped<ISharesProvider, SharesProvider>();
+        services.AddScoped<IOrderBookProvider, OrderBookProvider>();
     }
 
     private static void AddRateLimiters(this IServiceCollection services)
@@ -56,6 +58,6 @@ public static class Entry
     private static void AddTinkoffClients(this IServiceCollection services)
     {
         services.AddScoped(sp => sp.GetRequiredService<InvestApiClient>().Instruments);
-        
+        services.AddScoped(sp => sp.GetRequiredService<InvestApiClient>().MarketData);
     }
 }

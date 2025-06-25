@@ -24,6 +24,7 @@ public class SharesService(PostgresDbContext context, IGuidProvider guidProvider
         => await context.Shares
             .AsNoTracking()
             .WhereIf(!string.IsNullOrWhiteSpace(param.Ticker), x => x.Ticker.Equals(param.Ticker, StringComparison.OrdinalIgnoreCase))
+            .WhereIf(!string.IsNullOrWhiteSpace(param.Figi), x => x.Figi.Equals(param.Figi, StringComparison.OrdinalIgnoreCase))
             .WhereIf(!string.IsNullOrWhiteSpace(param.ClassCode), x => x.ClassCode.Equals(param.ClassCode, StringComparison.OrdinalIgnoreCase))
             .WhereIf(!string.IsNullOrWhiteSpace(param.Currency), x => x.Currency.Equals(param.Currency, StringComparison.OrdinalIgnoreCase))
             .WhereIf(param.CandleLoadStatus.HasValue, x => x.CandleLoadStatus == param.CandleLoadStatus)
@@ -50,6 +51,7 @@ public class SharesService(PostgresDbContext context, IGuidProvider guidProvider
                 Id = guidProvider.GetGuid(),
                 Currency = x.Currency,
                 ClassCode = x.ClassCode,
+                Figi = x.Figi,
                 CandleLoadStatus = LoadStatus.Disabled,
                 WeekendFlag = x.WeekendFlag,
                 CountryOfRisk = x.CountryOfRisk,

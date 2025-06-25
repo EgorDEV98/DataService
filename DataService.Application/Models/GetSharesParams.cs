@@ -15,6 +15,11 @@ public class GetSharesParams
     public string? Currency { get; set; }
     
     /// <summary>
+    /// Фиги
+    /// </summary>
+    public string? Figi { get; set; }
+    
+    /// <summary>
     /// Секция
     /// </summary>
     public string? ClassCode { get; set; }

@@ -118,6 +118,10 @@ namespace DataService.Data.Migrations
                     b.Property<bool>("DivYieldFlag")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Figi")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTimeOffset>("First1DayCandleDate")
                         .HasColumnType("timestamp with time zone");
 

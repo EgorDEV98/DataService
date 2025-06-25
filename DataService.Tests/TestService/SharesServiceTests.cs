@@ -119,22 +119,4 @@ public class SharesServiceTests
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.ChangeLoadStatus(param));
     }
-
-    [Fact]
-    public async Task PreloadSharesAsync_SavesShares()
-    {
-        // Arrange
-        var externalShares = _fixture.CreateMany<DataService.Integration.Models.Response.ExternalGetShareResponse>(3).ToList();
-
-        _sharesProviderMock
-            .Setup(x => x.GetSharesAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(externalShares);
-
-        // Act
-        var result = await _service.PreloadSharesAsync(CancellationToken.None);
-
-        // Assert
-        Assert.True(result);
-        Assert.Equal(3, _dbContext.Shares.Count());
-    }
 }

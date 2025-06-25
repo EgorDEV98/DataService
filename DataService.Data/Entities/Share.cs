@@ -23,6 +23,11 @@ public class Share
     public string ClassCode { get; set; } = null!;
     
     /// <summary>
+    /// Фиги инструмента
+    /// </summary>
+    public string Figi { get; set; } = null!;
+    
+    /// <summary>
     /// Лотность
     /// </summary>
     public int Lot { get; set; }

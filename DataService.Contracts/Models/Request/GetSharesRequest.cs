@@ -10,6 +10,11 @@ public class GetSharesRequest
     public string? Ticker { get; set; }
     
     /// <summary>
+    /// Фиги
+    /// </summary>
+    public string? Figi { get; set; }
+    
+    /// <summary>
     /// Валюта
     /// </summary>
     public string? Currency { get; set; }

@@ -65,6 +65,11 @@ public class GetShareResponse
     public decimal MinPriceIncrement { get; set; }
     
     /// <summary>
+    /// Фиги
+    /// </summary>
+    public string Figi { get; set; } = null!;
+    
+    /// <summary>
     /// Флаг, отображающий доступность торговли инструментом по выходным.
     /// </summary>
     public bool WeekendFlag { get; set; }

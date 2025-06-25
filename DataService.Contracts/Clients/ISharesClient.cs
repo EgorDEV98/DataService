@@ -6,12 +6,12 @@ namespace DataService.Contracts.Clients;
 
 public interface ISharesClient
 {
-    [Get("/Shares/{id}")]
+    [Get("/api/Shares/{id}")]
     public Task<GetShareResponse> GetShareAsync(Guid id, CancellationToken cancellationToken = default);
     
-    [Get("/Shares")]
+    [Get("/api/Shares")]
     public Task<IReadOnlyCollection<GetShareResponse>> GetSharesAsync([Query] GetSharesRequest request, CancellationToken cancellationToken = default);
     
-    [Patch("/Shares/{id}")]
+    [Patch("/api/Shares/{id}")]
     public Task<bool> ChangeLoadStatusAsync(Guid id, [Body] ChangeLoadStatusRequest request, CancellationToken cancellationToken = default);
 }

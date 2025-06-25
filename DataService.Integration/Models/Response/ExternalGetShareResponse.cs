@@ -9,6 +9,11 @@ public class ExternalGetShareResponse
     /// Тикер акции
     /// </summary>
     public string Ticker { get; set; } = null!;
+    
+    /// <summary>
+    /// Фиги
+    /// </summary>
+    public string Figi { get; set; } = null!;
 
     /// <summary>
     /// Секция торгов

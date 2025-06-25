@@ -21,6 +21,7 @@ public class ShareConfiguration : IEntityTypeConfiguration<Share>
         
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Ticker).IsRequired();
+        builder.Property(x => x.Figi).IsRequired();
         builder.Property(x => x.ClassCode).IsRequired();
         builder.Property(x => x.Lot).IsRequired();
         builder.Property(x => x.Currency).IsRequired();

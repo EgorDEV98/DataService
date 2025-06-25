@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataService.Data.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250624165101_addIndex")]
-    partial class addIndex
+    [Migration("20250625073059_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,6 +120,10 @@ namespace DataService.Data.Migrations
 
                     b.Property<bool>("DivYieldFlag")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Figi")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("First1DayCandleDate")
                         .HasColumnType("timestamp with time zone");

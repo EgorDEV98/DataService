@@ -33,6 +33,7 @@ namespace DataService.Data.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Ticker = table.Column<string>(type: "text", nullable: false),
                     ClassCode = table.Column<string>(type: "text", nullable: false),
+                    Figi = table.Column<string>(type: "text", nullable: false),
                     Lot = table.Column<int>(type: "integer", nullable: false),
                     Currency = table.Column<string>(type: "text", nullable: false),
                     ShortEnabledFlag = table.Column<bool>(type: "boolean", nullable: false),
@@ -79,9 +80,16 @@ namespace DataService.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Candles_ShareId",
+                name: "IX_Candles_ShareId_Interval_Time",
                 table: "Candles",
-                column: "ShareId");
+                columns: new[] { "ShareId", "Interval", "Time" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shares_Ticker",
+                table: "Shares",
+                column: "Ticker",
+                unique: true);
         }
 
         /// <inheritdoc />
