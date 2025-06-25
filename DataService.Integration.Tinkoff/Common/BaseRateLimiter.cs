@@ -25,7 +25,7 @@ public class BaseRateLimiter<T>(int tokenLimit, int tokensPerPeriod, int queueLi
         var lease = await _limiter.AcquireAsync(1, ct);
         if (!lease.IsAcquired)
         {
-            throw new Exception(nameof(T)+ " Rate limit exceeded");
+            throw new Exception(typeof(T).Name + " Rate limit exceeded");
         }
     }
 }

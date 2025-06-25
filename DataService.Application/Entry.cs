@@ -20,6 +20,7 @@ public static class Entry
     {
         services.AddScoped<IShareService, SharesService>();
         services.AddScoped<IOrderBookService, OrderBookService>();
+        services.AddScoped<ISchedulersService, SchedulersService>();
     }
 
     private static void AddProviders(this IServiceCollection services)

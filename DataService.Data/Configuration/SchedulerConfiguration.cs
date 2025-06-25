@@ -16,5 +16,7 @@ public class SchedulerConfiguration : IEntityTypeConfiguration<Scheduler>
         builder.Property(x => x.EndTime);
         builder.Property(x => x.IsTradingDay).IsRequired();
         builder.Property(x => x.Exchange).IsRequired();
+
+        builder.HasIndex(x => new { x.Exchange, x.StartTime, x.EndTime });
     }
 }

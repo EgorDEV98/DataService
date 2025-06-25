@@ -8,5 +8,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<OrderBookMapper>();
         services.AddSingleton<ShareMapper>();
+        services.AddSingleton<SchedulerMapper>();
     }
 }
