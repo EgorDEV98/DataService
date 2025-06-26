@@ -26,12 +26,14 @@ public static class Entry
     {
         services.AddSingleton<ExternalShareMapper>();
         services.AddSingleton<ExternalOrderBookMapper>();
+        services.AddSingleton<ExternalCandlesMapper>();
     }
     private static void AddProviders(this IServiceCollection services)
     {
         services.AddScoped<ISharesProvider, SharesProvider>();
         services.AddScoped<IOrderBookProvider, OrderBookProvider>();
         services.AddScoped<ISchedulersProvider, SchedulersProvider>();
+        services.AddScoped<ICandlesProvider, CandlesProvider>();
     }
 
     private static void AddRateLimiters(this IServiceCollection services)

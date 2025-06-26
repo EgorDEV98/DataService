@@ -11,7 +11,7 @@ using Refit;
 namespace DataService.WebApi.Controllers;
 
 [ApiController]
-[Route("/api/V1/[controller]")]
+[Route("/api/[controller]")]
 public class SharesController(IShareService service, ShareMapper mapper) : ControllerBase, ISharesClient
 {
     /// <summary>

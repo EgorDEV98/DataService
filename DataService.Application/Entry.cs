@@ -21,6 +21,7 @@ public static class Entry
         services.AddScoped<IShareService, SharesService>();
         services.AddScoped<IOrderBookService, OrderBookService>();
         services.AddScoped<ISchedulersService, SchedulersService>();
+        services.AddScoped<ICandlesService, CandlesService>();
     }
 
     private static void AddProviders(this IServiceCollection services)
