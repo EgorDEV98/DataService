@@ -13,8 +13,7 @@ public class SchedulersService(PostgresDbContext context, IGuidProvider guidProv
 {
     public async Task<IReadOnlyCollection<Scheduler>> GetSchedulersAsync(GetSchedulersParams param, CancellationToken cancellationToken)
         => await context.Schedulers
-            .WhereIf(!string.IsNullOrWhiteSpace(param.Exchange),
-                x => x.Exchange.Equals(param.Exchange, StringComparison.OrdinalIgnoreCase))
+            .WhereIf(!string.IsNullOrWhiteSpace(param.Exchange), x => x.Exchange == param.Exchange)
             .WhereIf(param.IsTradingDay.HasValue, x => x.IsTradingDay == param.IsTradingDay)
             .WhereIf(param.StartTime.HasValue, x => x.StartTime >= param.StartTime)
             .WhereIf(param.EndTime.HasValue, x => x.EndTime <= param.EndTime)
