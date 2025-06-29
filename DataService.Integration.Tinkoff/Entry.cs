@@ -34,6 +34,7 @@ public static class Entry
         services.AddScoped<IOrderBookProvider, OrderBookProvider>();
         services.AddScoped<ISchedulersProvider, SchedulersProvider>();
         services.AddScoped<ICandlesProvider, CandlesProvider>();
+        services.AddScoped<ICandleStreamProvider, CandleStreamProvider>();
     }
 
     private static void AddRateLimiters(this IServiceCollection services)

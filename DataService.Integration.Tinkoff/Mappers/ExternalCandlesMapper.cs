@@ -9,6 +9,7 @@ namespace DataService.Integration.Tinkoff.Mappers;
 public partial class ExternalCandlesMapper
 {
     public partial IReadOnlyCollection<ExternalCandleResponse> Map(IEnumerable<HistoricCandle> request);
+    public partial ExternalCandleResponse Map(Candle request);
     public CandleInterval Map(Interval interval)
         => interval switch
         {
