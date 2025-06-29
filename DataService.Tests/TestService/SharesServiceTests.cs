@@ -34,7 +34,7 @@ public class SharesServiceTests
             .ForEach(b => _fixture.Behaviors.Remove(b));
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-        _service = new SharesService(_dbContext, _guidProviderMock.Object, _sharesProviderMock.Object);
+        _service = new SharesService(_dbContext, _guidProviderMock.Object, _sharesProviderMock.Object, null);
     }
 
     [Fact]

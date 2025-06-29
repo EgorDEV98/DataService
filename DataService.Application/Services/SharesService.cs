@@ -1,5 +1,6 @@
 using DataService.Application.Interfaces;
 using DataService.Application.Models;
+using DataService.Application.Workers;
 using DataService.Contracts.Models.Enums;
 using DataService.Data;
 using DataService.Data.Entities;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataService.Application.Services;
 
-public class SharesService(PostgresDbContext context, IGuidProvider guidProvider, ISharesProvider sharesProvider) : IShareService
+public class SharesService(PostgresDbContext context, IGuidProvider guidProvider, ISharesProvider sharesProvider, HistoryCandleLoadWorker historyCandleLoadWorker) : IShareService
 {
     public async Task<Share> GetShareAsync(GetShareParams param, CancellationToken cancellationToken = default)
     {
@@ -39,6 +40,8 @@ public class SharesService(PostgresDbContext context, IGuidProvider guidProvider
         
         share.CandleLoadStatus = param.CandleLoadStatus;
         await context.SaveChangesAsync(cancellationToken);
+        if (share.CandleLoadStatus == LoadStatus.Enabled)
+            await historyCandleLoadWorker.EnqueueAsync(param.Id);
         
         return true;
     }

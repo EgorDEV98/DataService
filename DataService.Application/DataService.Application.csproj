@@ -13,6 +13,8 @@
 
     <ItemGroup>
       <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
+      <PackageReference Include="Quartz" Version="3.14.0" />
+      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
       <PackageReference Include="Riok.Mapperly" Version="4.2.1" />
     </ItemGroup>
 
