@@ -7,18 +7,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DataService.Application.Workers;
+namespace DataService.Application.Workers.HistoryWorkers;
 
-public class HistoryCandleLoadWorker(
-    ILogger<HistoryCandleLoadWorker> logger,
+public class HandleHistoryWorker(
+    ILogger<HandleHistoryWorker> logger,
     IGuidProvider guidProvider,
-    IServiceProvider serviceProvider) : BaseSyncWorker<HistoryCandleLoadWorker>(logger, guidProvider), IHostedService
+    IServiceProvider serviceProvider) : BaseHistoryWorker<HandleHistoryWorker>(logger, guidProvider), IHostedService
 {
     private readonly Channel<Guid> _channel = Channel.CreateUnbounded<Guid>();
     private readonly CancellationTokenSource _cts = new();
     private Task? _processingTask;
 
-    
+
     public ValueTask EnqueueAsync(Guid request)
         => _channel.Writer.WriteAsync(request);
 
@@ -46,7 +46,10 @@ public class HistoryCandleLoadWorker(
                 }
             }
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException ex)
+        {
+            logger.LogInformation(ex.Message);
+        }
         catch (Exception ex)
         {
             logger.LogCritical(ex, "Worker аварийно завершился");

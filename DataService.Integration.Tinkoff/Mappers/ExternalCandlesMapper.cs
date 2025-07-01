@@ -10,6 +10,25 @@ public partial class ExternalCandlesMapper
 {
     public partial IReadOnlyCollection<ExternalCandleResponse> Map(IEnumerable<HistoricCandle> request);
     public partial ExternalCandleResponse Map(Candle request);
+    
+    private Interval Convert(SubscriptionInterval interval)
+        => interval switch
+        {
+            SubscriptionInterval.OneMinute => Interval._1Min,
+            SubscriptionInterval._2Min => Interval._2Min,
+            SubscriptionInterval._3Min => Interval._3Min,
+            SubscriptionInterval.FiveMinutes => Interval._5Min,
+            SubscriptionInterval._10Min => Interval._10Min,
+            SubscriptionInterval.FifteenMinutes => Interval._15Min,
+            SubscriptionInterval._30Min => Interval._30Min,
+            SubscriptionInterval.OneHour => Interval._1Hour,
+            SubscriptionInterval._2Hour => Interval._2Hour,
+            SubscriptionInterval._4Hour => Interval._4Hour,
+            SubscriptionInterval.OneDay => Interval._1Day,
+            SubscriptionInterval.Week => Interval._1Week,
+            SubscriptionInterval.Month => Interval._1Month,
+            _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, null)
+        };
     public CandleInterval Map(Interval interval)
         => interval switch
         {

@@ -2,6 +2,8 @@ using DataService.Application.Interfaces;
 using DataService.Application.Providers;
 using DataService.Application.Services;
 using DataService.Application.Workers;
+using DataService.Application.Workers.HistoryWorkers;
+using DataService.Application.Workers.RealtimeWorkers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -21,24 +23,38 @@ public static class Entry
 
     private static void AddBackgroundWorkers(this IServiceCollection services)
     {
-        services.AddSingleton<HistoryCandleLoadWorker>();
-        services.AddHostedService(sp => sp.GetRequiredService<HistoryCandleLoadWorker>());
+        services.AddSingleton<HandleHistoryWorker>();
+        services.AddHostedService(sp => sp.GetRequiredService<HandleHistoryWorker>());
         
         services.AddQuartz(q =>
         {
-            q.AddJob<NightSyncWorker>(opts => opts.WithIdentity(NightSyncWorker.JobKey));
+            q.AddJob<NightHistoryWorker>(opts => opts.WithIdentity(NightHistoryWorker.JobKey));
             
             // ===== Cron триггер
             q.AddTrigger(opts => opts
-                .ForJob(NightSyncWorker.JobKey)
-                .WithIdentity($"{nameof(NightSyncWorker)}-cron-trigger")
+                .ForJob(NightHistoryWorker.JobKey)
+                .WithIdentity($"{nameof(NightHistoryWorker)}-cron-trigger")
                 .WithCronSchedule("0 1 0 * * ?"));
             
             // ===== Стартап триггер
             q.AddTrigger(opts => opts
-                .ForJob(NightSyncWorker.JobKey)
-                .WithIdentity($"{nameof(NightSyncWorker)}-on-startup-trigger")
+                .ForJob(NightHistoryWorker.JobKey)
+                .WithIdentity($"{nameof(NightHistoryWorker)}-on-startup-trigger")
                 .StartNow());
+            
+            // === OneMinuteRealtimeCandleWorker
+            q.AddJob<RealTimeWorker>(opts => opts.WithIdentity(RealTimeWorker.Key));
+            
+            q.AddTrigger(opts => opts
+                .ForJob(RealTimeWorker.Key)
+                .WithIdentity($"{nameof(RealTimeWorker)}-scheduled-trigger")
+                .WithSimpleSchedule(x =>
+                {
+                    x.WithIntervalInSeconds(1);
+                    x.RepeatForever();
+                }));
+
+           
         });
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }
@@ -49,6 +65,7 @@ public static class Entry
         services.AddScoped<IOrderBookService, OrderBookService>();
         services.AddScoped<ISchedulersService, SchedulersService>();
         services.AddScoped<ICandlesService, CandlesService>();
+        services.AddSingleton<ICandleBufferFlusher, CandleBufferFlusher>();
     }
 
     private static void AddProviders(this IServiceCollection services)

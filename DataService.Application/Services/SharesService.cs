@@ -1,16 +1,23 @@
 using DataService.Application.Interfaces;
 using DataService.Application.Models;
 using DataService.Application.Workers;
+using DataService.Application.Workers.HistoryWorkers;
 using DataService.Contracts.Models.Enums;
 using DataService.Data;
 using DataService.Data.Entities;
 using DataService.Data.Extensions;
 using DataService.Integration.Interfaces;
+using DataService.Integration.Models.Request;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataService.Application.Services;
 
-public class SharesService(PostgresDbContext context, IGuidProvider guidProvider, ISharesProvider sharesProvider, HistoryCandleLoadWorker historyCandleLoadWorker) : IShareService
+public class SharesService(
+    PostgresDbContext context, 
+    IGuidProvider guidProvider, 
+    ISharesProvider sharesProvider, 
+    HandleHistoryWorker handleHistoryWorker, 
+    ICandleStreamProvider streamProvider) : IShareService
 {
     public async Task<Share> GetShareAsync(GetShareParams param, CancellationToken cancellationToken = default)
     {
@@ -41,12 +48,12 @@ public class SharesService(PostgresDbContext context, IGuidProvider guidProvider
         share.CandleLoadStatus = param.CandleLoadStatus;
         await context.SaveChangesAsync(cancellationToken);
         if (share.CandleLoadStatus == LoadStatus.Enabled)
-            await historyCandleLoadWorker.EnqueueAsync(param.Id);
+            await handleHistoryWorker.EnqueueAsync(param.Id);
         
         return true;
     }
 
-    public async Task<bool> PreloadSharesAsync(CancellationToken cancellationToken)
+    public async Task<bool> PreloadSharesAsync(CancellationToken cancellationToken = default)
     {
         var externalShares = (await sharesProvider.GetSharesAsync(cancellationToken))
             .Select(x => new Share()

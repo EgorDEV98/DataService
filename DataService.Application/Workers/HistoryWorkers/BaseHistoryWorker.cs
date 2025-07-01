@@ -8,9 +8,9 @@ using DataService.Integration.Models.Request;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DataService.Application.Workers;
+namespace DataService.Application.Workers.HistoryWorkers;
 
-public class BaseSyncWorker<T>(ILogger<T> logger, IGuidProvider guidProvider)
+public class BaseHistoryWorker<T>(ILogger<T> logger, IGuidProvider guidProvider)
 {
     private readonly Interval[] _intervals =
     [

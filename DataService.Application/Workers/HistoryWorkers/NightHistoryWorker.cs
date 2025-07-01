@@ -8,18 +8,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quartz;
 
-namespace DataService.Application.Workers;
+namespace DataService.Application.Workers.HistoryWorkers;
 
-public class NightSyncWorker(ILogger<NightSyncWorker> logger, IServiceProvider serviceProvider, IGuidProvider guidProvider) 
-    : BaseSyncWorker<NightSyncWorker>(logger, guidProvider), IJob
+public class NightHistoryWorker(
+    ILogger<NightHistoryWorker> logger, 
+    IServiceProvider serviceProvider, 
+    IGuidProvider guidProvider) 
+    : BaseHistoryWorker<NightHistoryWorker>(logger, guidProvider), IJob
 {
-    public static JobKey JobKey = new(nameof(NightSyncWorker));
+    public static readonly JobKey JobKey = new(nameof(NightHistoryWorker));
     
     public async Task Execute(IJobExecutionContext context)
     {
-        logger.LogInformation("{Worker} Start", nameof(NightSyncWorker));
+        logger.LogInformation("{Worker} Start", nameof(NightHistoryWorker));
         await Run(context.CancellationToken);
-        logger.LogInformation("{Worker} End", nameof(NightSyncWorker));
+        logger.LogInformation("{Worker} End", nameof(NightHistoryWorker));
     }
 
     private async Task Run(CancellationToken cancellationToken)
@@ -35,7 +38,7 @@ public class NightSyncWorker(ILogger<NightSyncWorker> logger, IServiceProvider s
             await base.StartWork(share, postgres, candleProvider, cancellationToken);
     }
 
-    private async Task<IReadOnlyCollection<Share>> LoadShares(PostgresDbContext postgres, CancellationToken cancellationToken)
+    private static async Task<IReadOnlyCollection<Share>> LoadShares(PostgresDbContext postgres, CancellationToken cancellationToken)
         => await postgres.Shares
             .AsNoTracking()
             .Where(x => x.CandleLoadStatus == LoadStatus.Enabled)

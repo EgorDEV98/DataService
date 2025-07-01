@@ -1,7 +1,14 @@
+using DataService.Contracts.Models.Enums;
+
 namespace DataService.Integration.Models.Response;
 
 public class ExternalCandleResponse
 {
+    /// <summary>
+    /// Фиги инструмента
+    /// </summary>
+    public string Figi { get; set; }
+    
     /// <summary>
     /// Цена открытия
     /// </summary>
@@ -26,6 +33,11 @@ public class ExternalCandleResponse
     /// Объем
     /// </summary>
     public long Volume { get; init; }
+    
+    /// <summary>
+    /// Интервал
+    /// </summary>
+    public Interval Interval { get; set; }
     
     /// <summary>
     /// Время свечи
